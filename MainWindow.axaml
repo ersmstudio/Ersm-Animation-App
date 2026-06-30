@@ -1,0 +1,87 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Ersm_Animation_App"
+        mc:Ignorable="d" d:DesignWidth="1920" d:DesignHeight="1080"
+        x:Class="Ersm_Animation_App.MainWindow"
+        Title="MainWindow" Height="1080" Width="1920">
+    <Grid Background="LightGray" ColumnDefinitions="70,*" RowDefinitions="25,Auto,*">
+
+        <Menu Grid.Row="0" Grid.ColumnSpan="2">
+            <MenuItem Header="_File">
+                <MenuItem Header="New Project"/>
+                <MenuItem Header="Open"/>
+                <MenuItem Header="Save"/>
+                <MenuItem Header="Save As"/>
+                <Separator/>
+                <MenuItem Header="Exit"/>
+            </MenuItem>
+
+            <MenuItem Header="_Edit">
+                <MenuItem Header="Undo"/>
+                <MenuItem Header="Redo"/>
+                <MenuItem Header="Copy"/>
+                <MenuItem Header="Cut"/>
+                <MenuItem Header="Paste"/>
+                <MenuItem Header="Preferences"/>
+            </MenuItem>
+            <MenuItem Header="_View">
+                <MenuItem Header="Zoom In"/>
+                <MenuItem Header="Zoom Out"/>
+                <MenuItem Header="Reset Zoom"/>
+                <Separator/>
+                <MenuItem Header="Full Screen"/>
+            </MenuItem>
+            <MenuItem Header="_Tools">
+                <MenuItem Header="Animation Settings"/>
+                <MenuItem Header="Export"/>
+                <MenuItem Header="Import"/>
+            </MenuItem>
+            <MenuItem Header="_Window">
+                <MenuItem Header="Minimize"/>
+                <MenuItem Header="Maximize"/>
+                <MenuItem Header="Close"/>
+            </MenuItem>
+            <MenuItem Header="_Layer">
+                <MenuItem Header="Add Layer"/>
+                <MenuItem Header="Remove Layer"/>
+                <MenuItem Header="Move Layer Up"/>
+                <MenuItem Header="Move Layer Down"/>
+                <MenuItem Header="Layer Properties"/>
+                <MenuItem Header="Duplicate Layer"/>
+            </MenuItem>
+            <MenuItem Header="_Animation">
+                <MenuItem Header="Play"/>
+                <MenuItem Header="Pause"/>
+                <MenuItem Header="Stop"/>
+                <MenuItem Header="Loop Animation"/>
+                <MenuItem Header="Next Frame"/>
+                <MenuItem Header="Previous Frame"/>
+                <MenuItem Header="Go to Frame..."/>
+                <MenuItem Header="Insert Keyframe"/>
+                <MenuItem Header="Add Frame"/>
+                <MenuItem Header="Remove Frame"/>
+            </MenuItem>
+            <MenuItem Header="_Help">
+                <MenuItem Header="Documentation"/>
+                <MenuItem Header="About"/>
+            </MenuItem>
+        </Menu>
+        
+        <StackPanel Grid.Row="1" Orientation="Vertical" Background="Bisque">
+            <ToggleButton x:Name="pencilButton" Content="Pencil" IsChecked="True" Width="40" Height="40" Click="PencilButton_Click" />
+            <ToggleButton x:Name="brushButton" Content="Brush" Width="40" Height="40" Click="BrushButton_Click" />
+            <ToggleButton x:Name="eraserButton" Content="Eraser" Width="40" Height="40" Click="EraserButton_Click" />
+            <Button x:Name="clearButton" Content="Clear" Width="40" Height="40" Click="ClearButton_Click" />
+            <ToggleButton x:Name="colorPickerButton" Content="Color" Width="40" Height="40" Click="PickerButton_Click" />
+        </StackPanel>
+        
+        <Border Grid.Column="1" Grid.Row="1" Background="LightGray" BorderBrush="Black" BorderThickness="1" CornerRadius="5" Padding="10" Margin="0,123,0,0" HorizontalAlignment="Center" VerticalAlignment="Top">
+            <Canvas x:Name="AnimationCanvas" Background="White" Width="893" Height="421" VerticalAlignment="Center" HorizontalAlignment="Left" />
+        </Border>
+
+        <Grid Grid.Row="2" Grid.ColumnSpan="2" ColumnDefinitions="300,*" RowDefinitions="80,40">
+        </Grid>
+    </Grid>
+</Window>
