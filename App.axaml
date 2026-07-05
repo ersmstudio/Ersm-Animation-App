@@ -3,6 +3,8 @@
              x:Class="Ersm_Animation_App.App"
              RequestedThemeVariant="Default">
     <Application.Styles>
+        <StyleInclude Source="avares://Avalonia.Controls.ColorPicker/Themes/Fluent/Fluent.xaml" />
+
         <FluentTheme />
     </Application.Styles>
 </Application>

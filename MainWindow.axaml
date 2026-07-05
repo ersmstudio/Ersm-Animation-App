@@ -3,6 +3,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Ersm_Animation_App"
+        xmlns:controls="clr-namespace:Ersm_Animation_App.Controls"
         mc:Ignorable="d" d:DesignWidth="1920" d:DesignHeight="1080"
         x:Class="Ersm_Animation_App.MainWindow"
         Title="MainWindow" Height="1080" Width="1920">
@@ -70,11 +71,28 @@
         </Menu>
         
         <StackPanel Grid.Row="1" Orientation="Vertical" Background="Bisque">
-            <ToggleButton x:Name="pencilButton" Content="Pencil" IsChecked="True" Width="40" Height="40" Click="PencilButton_Click" />
-            <ToggleButton x:Name="brushButton" Content="Brush" Width="40" Height="40" Click="BrushButton_Click" />
-            <ToggleButton x:Name="eraserButton" Content="Eraser" Width="40" Height="40" Click="EraserButton_Click" />
+            <ToggleButton x:Name="pencilButton" Content="Pencil" IsChecked="True" Width="40" Height="40" Click="PencilButton_Click" >
+                   
+            </ToggleButton>
+            
+            <ToggleButton x:Name="brushButton" Content="Brush" Width="40" Height="40" Click="BrushButton_Click" >
+            
+            </ToggleButton>
+            <ToggleButton x:Name="eraserButton" Content="Eraser" Width="40" Height="40" Click="EraserButton_Click" >
+            </ToggleButton>
             <Button x:Name="clearButton" Content="Clear" Width="40" Height="40" Click="ClearButton_Click" />
-            <ToggleButton x:Name="colorPickerButton" Content="Color" Width="40" Height="40" Click="PickerButton_Click" />
+            <ToggleButton x:Name="colorPickerButton" Content="Color" Width="40" Height="40" Click="PickerButton_Click" >
+            
+            
+            </ToggleButton>
+            <SplitButton x:Name="ColorButton" Padding="0" MinHeight="0" MinWidth="0" VerticalAlignment="Top">
+                <Border x:Name="CurrentColor" Width="40" Height="40" Background="Black" Margin="0" CornerRadius="4,0,0,4" />
+                <SplitButton.Flyout>
+                    <Flyout Placement="Bottom">
+                       
+                    </Flyout>
+                </SplitButton.Flyout>
+            </SplitButton>
         </StackPanel>
         
         <Border Grid.Column="1" Grid.Row="1" Background="LightGray" BorderBrush="Black" BorderThickness="1" CornerRadius="5" Padding="10" Margin="0,123,0,0" HorizontalAlignment="Center" VerticalAlignment="Top">
