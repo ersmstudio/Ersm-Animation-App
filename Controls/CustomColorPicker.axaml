@@ -1,89 +1,65 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="using:Ersm_Animation_App.Controls"
              x:Class="Ersm_Animation_App.Controls.CustomColorPicker"
-             Width="320" MinHeight="420">
+             Width="420" MinHeight="420">
   
   <ScrollViewer VerticalScrollBarVisibility="Auto" MaxHeight="500">
     <StackPanel Margin="12" Spacing="12">
       
       <!-- Color Preview Box -->
-      <Border BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="6" Padding="8" Background="#F5F5F5">
+      <Border BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="6" Padding="8" Background="{DynamicResource CanvasBg}">
         <Grid RowDefinitions="Auto,Auto" ColumnDefinitions="*,*" ColumnSpacing="8" RowSpacing="8">
           <TextBlock Text="Current Color" FontSize="12" FontWeight="SemiBold" Grid.ColumnSpan="2" />
           <Border Grid.Row="1" Grid.Column="0" Width="64" Height="64" CornerRadius="4" x:Name="PreviewBorder" Background="Black" BorderBrush="#CCCCCC" BorderThickness="1" />
           <StackPanel Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" Spacing="4">
-            <TextBlock x:Name="HexDisplay" Text="#FF000000" FontFamily="Courier New" FontSize="11" Foreground="#333" />
-            <TextBlock x:Name="RgbDisplay" Text="RGB(0, 0, 0)" FontFamily="Courier New" FontSize="11" Foreground="#666" />
-            <Button x:Name="CopyHexButton" Content="Copy Hex" Padding="6,2" FontSize="10" />
+            <TextBlock x:Name="HexDisplay" Text="#FF000000" FontFamily="Courier New" FontSize="11" Foreground="{DynamicResource Text}" />
+            <TextBlock x:Name="RgbDisplay" Text="RGB(0, 0, 0)" FontFamily="Courier New" FontSize="11" Foreground="{DynamicResource TextLight}" />
           </StackPanel>
         </Grid>
       </Border>
-
+      
+      <Grid ColumnDefinitions="320,100">              
+          <local:ColorSquare x:Name="ColorSquare" Grid.Column="0" Width="180" Height="180" />
+          <local:HueSlider x:Name="ColorSlider" Grid.Column="1" Width="32" Height="180" />
+      </Grid>
+      
       <!-- Hex Input -->
-      <TextBox x:Name="HexTextBox" 
-               Watermark="Enter hex color: #AARRGGBB or #RRGGBB" 
-               Height="32" 
-               FontFamily="Courier New" />
+      <TextBox x:Name="HexTextBox" PlaceholderText="#AARRGGBB" Height="32" FontFamily="Courier New" />
 
       <!-- RGB Sliders -->
-      <Border BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="6" Padding="8" Background="#F9F9F9">
+      <Border BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="6" Padding="8" Background="{DynamicResource CanvasBg}">
         <StackPanel Spacing="8">
           <TextBlock Text="RGB Channels" FontSize="12" FontWeight="SemiBold" />
-          
-          <!-- Red Slider -->
           <Grid ColumnDefinitions="40,*,40" ColumnSpacing="8">
             <TextBlock Text="R:" VerticalAlignment="Center" FontWeight="Medium" />
-            <Slider x:Name="RSlider" Minimum="0" Maximum="255" Grid.Column="1" IsSnapToTickEnabled="False" />
-            <TextBlock x:Name="RValue" Text="0" Grid.Column="2" VerticalAlignment="Center" TextAlignment="Right" FontFamily="Courier New" />
+            <Slider x:Name="RSlider" Minimum="0" Maximum="255" Grid.Column="1" />
+            <TextBlock x:Name="RValue" Text="0" Grid.Column="2" VerticalAlignment="Center" TextAlignment="Right" />
           </Grid>
-
-          <!-- Green Slider -->
           <Grid ColumnDefinitions="40,*,40" ColumnSpacing="8">
             <TextBlock Text="G:" VerticalAlignment="Center" FontWeight="Medium" />
-            <Slider x:Name="GSlider" Minimum="0" Maximum="255" Grid.Column="1" IsSnapToTickEnabled="False" />
-            <TextBlock x:Name="GValue" Text="0" Grid.Column="2" VerticalAlignment="Center" TextAlignment="Right" FontFamily="Courier New" />
+            <Slider x:Name="GSlider" Minimum="0" Maximum="255" Grid.Column="1" />
+            <TextBlock x:Name="GValue" Text="0" Grid.Column="2" VerticalAlignment="Center" TextAlignment="Right" />
           </Grid>
-
-          <!-- Blue Slider -->
           <Grid ColumnDefinitions="40,*,40" ColumnSpacing="8">
             <TextBlock Text="B:" VerticalAlignment="Center" FontWeight="Medium" />
-            <Slider x:Name="BSlider" Minimum="0" Maximum="255" Grid.Column="1" IsSnapToTickEnabled="False" />
-            <TextBlock x:Name="BValue" Text="0" Grid.Column="2" VerticalAlignment="Center" TextAlignment="Right" FontFamily="Courier New" />
+            <Slider x:Name="BSlider" Minimum="0" Maximum="255" Grid.Column="1" />
+            <TextBlock x:Name="BValue" Text="0" Grid.Column="2" VerticalAlignment="Center" TextAlignment="Right" />
           </Grid>
-
-          <!-- Alpha Slider -->
           <Grid ColumnDefinitions="40,*,40" ColumnSpacing="8">
             <TextBlock Text="A:" VerticalAlignment="Center" FontWeight="Medium" />
-            <Slider x:Name="ASlider" Minimum="0" Maximum="255" Grid.Column="1" IsSnapToTickEnabled="False" />
-            <TextBlock x:Name="AValue" Text="255" Grid.Column="2" VerticalAlignment="Center" TextAlignment="Right" FontFamily="Courier New" />
+            <Slider x:Name="ASlider" Minimum="0" Maximum="255" Grid.Column="1" />
+            <TextBlock x:Name="AValue" Text="255" Grid.Column="2" VerticalAlignment="Center" TextAlignment="Right" />
           </Grid>
-        </StackPanel>
-      </Border>
-
-      <!-- Color Presets -->
-      <Border BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="6" Padding="8" Background="#F9F9F9">
-        <StackPanel Spacing="8">
-          <TextBlock Text="Preset Colors" FontSize="12" FontWeight="SemiBold" />
-          <WrapPanel x:Name="PresetsPanel" />
-        </StackPanel>
-      </Border>
-
-      <!-- Recent Colors -->
-      <Border BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="6" Padding="8" Background="#F9F9F9">
-        <StackPanel Spacing="8">
-          <TextBlock Text="Recent Colors" FontSize="12" FontWeight="SemiBold" />
-          <WrapPanel x:Name="RecentColorsPanel" />
         </StackPanel>
       </Border>
 
       <!-- Action Buttons -->
       <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="8">
-        <Button x:Name="OkButton" Content="OK" Padding="16,8" MinWidth="80" />
-        <Button x:Name="CancelButton" Content="Cancel" Padding="16,8" MinWidth="80" />
-        <Button x:Name="ResetButton" Content="Reset" Padding="16,8" MinWidth="80" />
+        <Button x:Name="OkButton" Content="OK" Padding="16,8" MinWidth="80" Click="OkButton_Click"/>
+        <Button x:Name="CancelButton" Content="Cancel" Padding="16,8" MinWidth="80" Click="CancelButton_Click"/>
       </StackPanel>
 
     </StackPanel>
   </ScrollViewer>
-  
 </UserControl>

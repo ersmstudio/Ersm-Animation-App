@@ -1,0 +1,20 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="Ersm_Animation_App.SaveConfirmDialog"
+        Title="Save Changes?"
+        Width="400" Height="150"
+        WindowStartupLocation="CenterOwner"
+        CanResize="False"
+        Background="{DynamicResource PrimaryBg}">
+    <Grid RowDefinitions="*, Auto" Margin="20">
+        <TextBlock Text="You have unsaved changes. Do you want to save before exiting?" 
+                   TextWrapping="Wrap" VerticalAlignment="Center" HorizontalAlignment="Center" 
+                   FontSize="16" Foreground="{DynamicResource Text}"/>
+        
+        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Spacing="20" Margin="0,20,0,0">
+            <Button Content="Save" Width="80" HorizontalContentAlignment="Center" Click="BtnSave_Click" Background="{DynamicResource Accent}" Foreground="White"/>
+            <Button Content="Don't Save" Width="100" HorizontalContentAlignment="Center" Click="BtnDontSave_Click"/>
+            <Button Content="Cancel" Width="80" HorizontalContentAlignment="Center" Click="BtnCancel_Click"/>
+        </StackPanel>
+    </Grid>
+</Window>

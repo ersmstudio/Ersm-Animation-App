@@ -1,0 +1,22 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="Ersm_Animation_App.Controls.ColorPalettePanel"
+             Background="{DynamicResource PanelBg}">
+    <StackPanel Spacing="8" Margin="10">
+        <TextBlock Text="🎨 Color Palette" FontWeight="Bold" FontSize="14" />
+        <TextBlock Text="Click to select · Double-click to edit · Right-click to delete" 
+                   Foreground="{DynamicResource TextLight}" FontSize="10" TextWrapping="Wrap"/>
+        <WrapPanel x:Name="PaletteContainer" Margin="0,5,0,5"/>
+        <Button x:Name="BtnAddPaletteColor" Content="+ Add Color" 
+                HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" 
+                Click="AddPaletteColor_Click"/>
+        <Separator Background="{DynamicResource Border}" Height="1"/>
+        <StackPanel Orientation="Horizontal" Spacing="5">
+            <TextBlock Text="Active:" VerticalAlignment="Center" FontWeight="SemiBold"/>
+            <Border x:Name="ActiveColorPreview" Width="24" Height="24" 
+                    Background="Black" CornerRadius="4" 
+                    BorderBrush="{DynamicResource Border}" BorderThickness="1"/>
+            <TextBlock x:Name="ActiveColorName" Text="Black" VerticalAlignment="Center"/>
+        </StackPanel>
+    </StackPanel>
+</UserControl>

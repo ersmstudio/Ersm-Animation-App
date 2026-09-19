@@ -1,0 +1,16 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="Ersm_Animation_App.TextInputDialog"
+        Title="Enter Text" Width="400" Height="200"
+        WindowStartupLocation="CenterOwner"
+        Background="{DynamicResource PanelBg}"
+        CanResize="False">
+    <StackPanel Margin="20" Spacing="15">
+        <TextBlock Text="Enter text for the animation:" FontWeight="Bold" />
+        <TextBox x:Name="InputTextBox" Height="80" AcceptsReturn="True" TextWrapping="Wrap" />
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="10">
+            <Button Content="Cancel" Click="BtnCancel_Click" Width="80" HorizontalContentAlignment="Center"/>
+            <Button Content="OK" Click="BtnOk_Click" Width="80" HorizontalContentAlignment="Center" Classes="accent"/>
+        </StackPanel>
+    </StackPanel>
+</Window>

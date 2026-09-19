@@ -1,0 +1,10 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="Ersm_Animation_App.Controls.SwatchesPanel"
+             Background="{DynamicResource PanelBg}">
+    <StackPanel Spacing="10" Margin="10">
+        <TextBlock Text="Swatches" FontWeight="Bold" />
+        <WrapPanel x:Name="PresetsPanel" Margin="0,5,0,10"/>
+        <Button Content="+ Save Current Color" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Click="AddSwatch_Click"/>
+    </StackPanel>
+</UserControl>

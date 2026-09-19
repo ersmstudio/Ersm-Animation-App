@@ -1,10 +1,27 @@
 <Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              x:Class="Ersm_Animation_App.App"
-             RequestedThemeVariant="Default">
+             RequestedThemeVariant="Light">
     <Application.Styles>
-        <StyleInclude Source="avares://Avalonia.Controls.ColorPicker/Themes/Fluent/Fluent.xaml" />
-
         <FluentTheme />
+        <StyleInclude Source="avares://Avalonia.Controls.ColorPicker/Themes/Fluent/Fluent.xaml" />
+        <StyleInclude Source="avares://Ersm Animation App/Styles/AppDefaultStyles.axaml" />
     </Application.Styles>
+    
+    <Application.Resources>
+        <!-- Beige / Cream / Gray Theme -->
+        <SolidColorBrush x:Key="PrimaryBg">#F5F0E8</SolidColorBrush>
+        <SolidColorBrush x:Key="SecondaryBg">#EDE8D0</SolidColorBrush>
+        <SolidColorBrush x:Key="ToolbarBg">#E8E0D0</SolidColorBrush>
+        <SolidColorBrush x:Key="CanvasBg">#FFFFFF</SolidColorBrush>
+        <SolidColorBrush x:Key="PanelBg">#F0EBE0</SolidColorBrush>
+        <SolidColorBrush x:Key="TimelineBg">#EAE4D8</SolidColorBrush>
+        <SolidColorBrush x:Key="Accent">#C8A96E</SolidColorBrush>
+        <SolidColorBrush x:Key="AccentHover">#D4B87A</SolidColorBrush>
+        <SolidColorBrush x:Key="Text">#4A4540</SolidColorBrush>
+        <SolidColorBrush x:Key="TextLight">#4A4540</SolidColorBrush>
+        <SolidColorBrush x:Key="Border">#D5CFC0</SolidColorBrush>
+        <SolidColorBrush x:Key="Selected">#DDD5C0</SolidColorBrush>
+        <SolidColorBrush x:Key="StatusBar">#E0D8C8</SolidColorBrush>
+    </Application.Resources>
 </Application>

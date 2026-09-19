@@ -1,0 +1,51 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="using:Ersm_Animation_App"
+        x:Class="Ersm_Animation_App.WelcomeWindow"
+        Title="Welcome to Ersm Animation"
+        Width="800" Height="600"
+        WindowStartupLocation="CenterScreen"
+        Background="{DynamicResource PrimaryBg}">
+    <Grid ColumnDefinitions="*, *" Margin="40">
+        <!-- Left Side: New Project -->
+        <StackPanel Grid.Column="0" Spacing="20" VerticalAlignment="Center" Margin="0,0,20,0">
+            <TextBlock Text="Ersm Animation V1.0" FontSize="36" FontWeight="Bold" Foreground="{DynamicResource Accent}" />
+            <TextBlock Text="Create a new project:" FontSize="18" Foreground="{DynamicResource TextLight}" />
+            
+            <Grid ColumnDefinitions="100, *" RowDefinitions="Auto,Auto,Auto,Auto" Margin="0,20,0,0">
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="Name:" VerticalAlignment="Center" />
+                <TextBox Grid.Row="0" Grid.Column="1" x:Name="ProjectNameInput" Text="My Animation" Margin="0,5" />
+                
+                <TextBlock Grid.Row="1" Grid.Column="0" Text="Width:" VerticalAlignment="Center" />
+                <NumericUpDown Grid.Row="1" Grid.Column="1" x:Name="WidthInput" Value="1920" Minimum="100" Maximum="4000" Margin="0,5" />
+                
+                <TextBlock Grid.Row="2" Grid.Column="0" Text="Height:" VerticalAlignment="Center" />
+                <NumericUpDown Grid.Row="2" Grid.Column="1" x:Name="HeightInput" Value="1080" Minimum="100" Maximum="4000" Margin="0,5" />
+                
+                <TextBlock Grid.Row="3" Grid.Column="0" Text="FPS:" VerticalAlignment="Center" />
+                <NumericUpDown Grid.Row="3" Grid.Column="1" x:Name="FpsInput" Value="24" Minimum="1" Maximum="120" Margin="0,5" />
+            </Grid>
+            
+            <Button Content="Create Project" FontSize="18" Padding="15,10" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Background="{DynamicResource Accent}" Foreground="White" Click="CreateProject_Click"/>
+        </StackPanel>
+
+        <!-- Right Side: Open Project & Recent -->
+        <Border Grid.Column="1" Background="{DynamicResource PanelBg}" CornerRadius="10" Padding="20">
+            <StackPanel Spacing="20">
+                <Button Content="Open Project (.ersma)" FontSize="18" Padding="15,10" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Click="OpenProject_Click"/>
+                <TextBlock Text="Recent Projects" FontSize="18" FontWeight="SemiBold" Foreground="{DynamicResource TextLight}" Margin="0,20,0,10"/>
+                
+                <ListBox x:Name="RecentProjectsList" Background="Transparent" BorderThickness="0">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate x:DataType="local:RecentProjectModel">
+                            <StackPanel>
+                                <TextBlock Text="{Binding Name}" FontWeight="Bold" />
+                                <TextBlock Text="{Binding Path}" FontSize="12" Foreground="{DynamicResource TextLight}" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>

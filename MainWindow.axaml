@@ -1,105 +1,122 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Ersm_Animation_App"
-        xmlns:controls="clr-namespace:Ersm_Animation_App.Controls"
-        mc:Ignorable="d" d:DesignWidth="1920" d:DesignHeight="1080"
+        xmlns:local="using:Ersm_Animation_App"
+        xmlns:controls="using:Ersm_Animation_App.Controls"
         x:Class="Ersm_Animation_App.MainWindow"
-        Title="MainWindow" Height="1080" Width="1920">
-    <Grid Background="LightGray" ColumnDefinitions="70,*" RowDefinitions="25,Auto,*">
+        Title="Ersm Animation App V1.0" Width="1280" Height="720"
+        Background="{DynamicResource PrimaryBg}"
+        Closing="Window_Closing">
 
-        <Menu Grid.Row="0" Grid.ColumnSpan="2">
+    <Grid RowDefinitions="Auto, Auto, *, Auto, 150, Auto" ColumnDefinitions="60, *, Auto">
+        
+        <!-- Menu Bar -->
+        <Menu Grid.Row="0" Grid.ColumnSpan="3" Background="{DynamicResource ToolbarBg}" Foreground="Black">
             <MenuItem Header="_File">
-                <MenuItem Header="New Project"/>
-                <MenuItem Header="Open"/>
-                <MenuItem Header="Save"/>
-                <MenuItem Header="Save As"/>
+                <MenuItem Header="New Project" Click="MenuNewProject_Click"/>
+                <MenuItem Header="Open..." Click="MenuOpen_Click"/>
+                <MenuItem Header="Save" Click="MenuSave_Click" HotKey="Ctrl+S"/>
+                <MenuItem Header="Save As..." Click="MenuSaveAs_Click"/>
                 <Separator/>
-                <MenuItem Header="Exit"/>
+                <MenuItem Header="Export as MP4..." Click="MenuExportMp4_Click"/>
+                <MenuItem Header="Export as GIF..." Click="MenuExportGif_Click"/>
+                <Separator/>
+                <MenuItem Header="Exit" Click="MenuExit_Click"/>
             </MenuItem>
-
             <MenuItem Header="_Edit">
-                <MenuItem Header="Undo"/>
-                <MenuItem Header="Redo"/>
-                <MenuItem Header="Copy"/>
-                <MenuItem Header="Cut"/>
-                <MenuItem Header="Paste"/>
-                <MenuItem Header="Preferences"/>
-            </MenuItem>
-            <MenuItem Header="_View">
-                <MenuItem Header="Zoom In"/>
-                <MenuItem Header="Zoom Out"/>
-                <MenuItem Header="Reset Zoom"/>
+                <MenuItem Header="Undo" Click="MenuUndo_Click" HotKey="Ctrl+Z"/>
+                <MenuItem Header="Redo" Click="MenuRedo_Click" HotKey="Ctrl+Shift+Z"/>
                 <Separator/>
-                <MenuItem Header="Full Screen"/>
-            </MenuItem>
-            <MenuItem Header="_Tools">
-                <MenuItem Header="Animation Settings"/>
-                <MenuItem Header="Export"/>
-                <MenuItem Header="Import"/>
-            </MenuItem>
-            <MenuItem Header="_Window">
-                <MenuItem Header="Minimize"/>
-                <MenuItem Header="Maximize"/>
-                <MenuItem Header="Close"/>
-            </MenuItem>
-            <MenuItem Header="_Layer">
-                <MenuItem Header="Add Layer"/>
-                <MenuItem Header="Remove Layer"/>
-                <MenuItem Header="Move Layer Up"/>
-                <MenuItem Header="Move Layer Down"/>
-                <MenuItem Header="Layer Properties"/>
-                <MenuItem Header="Duplicate Layer"/>
+                <MenuItem Header="Clear Current Frame" Click="MenuClearFrame_Click" HotKey="Delete"/>
             </MenuItem>
             <MenuItem Header="_Animation">
-                <MenuItem Header="Play"/>
-                <MenuItem Header="Pause"/>
-                <MenuItem Header="Stop"/>
-                <MenuItem Header="Loop Animation"/>
-                <MenuItem Header="Next Frame"/>
-                <MenuItem Header="Previous Frame"/>
-                <MenuItem Header="Go to Frame..."/>
-                <MenuItem Header="Insert Keyframe"/>
-                <MenuItem Header="Add Frame"/>
-                <MenuItem Header="Remove Frame"/>
+                <MenuItem Header="Play/Pause" Click="MenuPlayPause_Click" HotKey="Space"/>
+                <MenuItem Header="Add Frame" Click="MenuAddFrame_Click"/>
             </MenuItem>
             <MenuItem Header="_Help">
-                <MenuItem Header="Documentation"/>
-                <MenuItem Header="About"/>
+                <MenuItem Header="About" Click="MenuAbout_Click"/>
             </MenuItem>
         </Menu>
         
-        <StackPanel Grid.Row="1" Orientation="Vertical" Background="Bisque">
-            <ToggleButton x:Name="pencilButton" Content="Pencil" IsChecked="True" Width="40" Height="40" Click="PencilButton_Click" >
-                   
-            </ToggleButton>
-            
-            <ToggleButton x:Name="brushButton" Content="Brush" Width="40" Height="40" Click="BrushButton_Click" >
-            
-            </ToggleButton>
-            <ToggleButton x:Name="eraserButton" Content="Eraser" Width="40" Height="40" Click="EraserButton_Click" >
-            </ToggleButton>
-            <Button x:Name="clearButton" Content="Clear" Width="40" Height="40" Click="ClearButton_Click" />
-            <ToggleButton x:Name="colorPickerButton" Content="Color" Width="40" Height="40" Click="PickerButton_Click" >
-            
-            
-            </ToggleButton>
-            <SplitButton x:Name="ColorButton" Padding="0" MinHeight="0" MinWidth="0" VerticalAlignment="Top">
-                <Border x:Name="CurrentColor" Width="40" Height="40" Background="Black" Margin="0" CornerRadius="4,0,0,4" />
-                <SplitButton.Flyout>
-                    <Flyout Placement="Bottom">
-                       
-                    </Flyout>
-                </SplitButton.Flyout>
-            </SplitButton>
-        </StackPanel>
+        <!-- Tool Settings Bar -->
+        <controls:ToolSettingsBar x:Name="ToolSettings" Grid.Row="1" Grid.ColumnSpan="3" />
         
-        <Border Grid.Column="1" Grid.Row="1" Background="LightGray" BorderBrush="Black" BorderThickness="1" CornerRadius="5" Padding="10" Margin="0,123,0,0" HorizontalAlignment="Center" VerticalAlignment="Top">
-            <Canvas x:Name="AnimationCanvas" Background="White" Width="893" Height="421" VerticalAlignment="Center" HorizontalAlignment="Left" />
+        <!-- Left Tool Bar -->
+        <Border Grid.Row="2" Grid.Column="0" Background="{DynamicResource ToolbarBg}" Padding="5">
+            <StackPanel Spacing="10">
+                <!-- Selectors -->
+                <ToggleButton x:Name="BtnSelect" Content="↖️" ToolTip.Tip="Select" Width="40" Height="40" Click="Tool_Click" FontSize="18"/>
+                <ToggleButton x:Name="BtnLasso" Content="✂️" ToolTip.Tip="Lasso Select" Width="40" Height="40" Click="Tool_Click" FontSize="18"/>
+                <Separator Background="{DynamicResource Border}" Height="1" Margin="0,5"/>
+                
+                <!-- Drawing -->
+                <ToggleButton x:Name="BtnPencil" Content="✏️" ToolTip.Tip="Pencil" Width="40" Height="40" IsChecked="True" Click="Tool_Click" FontSize="18"/>
+                <ToggleButton x:Name="BtnBrush" Content="🖌️" ToolTip.Tip="Brush" Width="40" Height="40" Click="Tool_Click" FontSize="18"/>
+                <ToggleButton x:Name="BtnBucket" Content="🪣" ToolTip.Tip="Paint Bucket (Fill)" Width="40" Height="40" Click="Tool_Click" FontSize="18"/>
+                <ToggleButton x:Name="BtnEraser" Content="🧹" ToolTip.Tip="Eraser" Width="40" Height="40" Click="Tool_Click" FontSize="18"/>
+                <Separator Background="{DynamicResource Border}" Height="1" Margin="0,5"/>
+                
+                <!-- Shapes & Text -->
+                <ToggleButton x:Name="BtnLine" Content="📏" ToolTip.Tip="Line" Width="40" Height="40" Click="Tool_Click" FontSize="18"/>
+                <ToggleButton x:Name="BtnRect" Content="⬜" ToolTip.Tip="Rectangle" Width="40" Height="40" Click="Tool_Click" FontSize="18"/>
+                <ToggleButton x:Name="BtnEllipse" Content="⭕" ToolTip.Tip="Ellipse" Width="40" Height="40" Click="Tool_Click" FontSize="18"/>
+                <ToggleButton x:Name="BtnText" Content="T" ToolTip.Tip="Text" Width="40" Height="40" Click="Tool_Click" FontSize="18" FontWeight="Bold"/>
+                
+                <Separator Background="{DynamicResource Border}" Height="1" Margin="0,5"/>
+                
+                <!-- Dual Colors (Stroke & Fill) -->
+                <Grid Width="40" Height="50" Margin="0,5">
+                    <!-- Fill Color (Back) -->
+                    <SplitButton x:Name="FillColorBtn" Width="30" Height="30" Padding="0" Margin="10,20,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Click="FillColorBtn_Click" ZIndex="0">
+                        <Border x:Name="FillColorBorder" Width="30" Height="30" Background="White" BorderBrush="{DynamicResource Border}" BorderThickness="1" CornerRadius="4" />
+                        <SplitButton.Flyout>
+                            <Flyout Placement="Right">
+                                <controls:CustomColorPicker x:Name="FillColorPicker" />
+                            </Flyout>
+                        </SplitButton.Flyout>
+                    </SplitButton>
+                    
+                    <!-- Stroke Color (Front) -->
+                    <SplitButton x:Name="StrokeColorBtn" Width="30" Height="30" Padding="0" Margin="0,0,10,20" HorizontalAlignment="Left" VerticalAlignment="Top" Click="StrokeColorBtn_Click" ZIndex="1">
+                        <Border x:Name="StrokeColorBorder" Width="30" Height="30" Background="Black" BorderBrush="{DynamicResource Border}" BorderThickness="1" CornerRadius="4" />
+                        <SplitButton.Flyout>
+                            <Flyout Placement="Right">
+                                <controls:CustomColorPicker x:Name="StrokeColorPicker" />
+                            </Flyout>
+                        </SplitButton.Flyout>
+                    </SplitButton>
+                    
+                    <!-- Swap Button -->
+                    <Button Content="↔" Width="20" Height="20" Padding="0" Margin="20,0,0,25" HorizontalAlignment="Right" VerticalAlignment="Top" FontSize="10" Click="SwapColors_Click" ZIndex="2"/>
+                </Grid>
+            </StackPanel>
         </Border>
 
-        <Grid Grid.Row="2" Grid.ColumnSpan="2" ColumnDefinitions="300,*" RowDefinitions="80,40">
-        </Grid>
+        <!-- Canvas Area with ZoomBorder -->
+        <Border Grid.Row="2" Grid.Column="1" Background="{DynamicResource PrimaryBg}" ClipToBounds="True">
+            <controls:ZoomBorder x:Name="ZoomCtrl" Background="Transparent">
+                <Border BorderBrush="{DynamicResource Border}" BorderThickness="1" HorizontalAlignment="Center" VerticalAlignment="Center" Background="{DynamicResource CanvasBg}" Margin="20">
+                    <local:DrawingCanvas x:Name="AnimCanvas" />
+                </Border>
+            </controls:ZoomBorder>
+        </Border>
+
+        <!-- Right Panel (GridSplitter + Panel) -->
+        <GridSplitter Grid.Row="2" Grid.Column="2" Grid.RowSpan="3" ResizeDirection="Columns" HorizontalAlignment="Left" Width="4"/>
+        <controls:RightPanel x:Name="RightPanel" Grid.Row="2" Grid.Column="2" Grid.RowSpan="3" Margin="4,0,0,0" Width="250"/>
+
+        <GridSplitter Grid.Row="3" Grid.Column="1" ResizeDirection="Rows" VerticalAlignment="Top" Height="4"/>
+
+        <!-- Timeline -->
+        <controls:TimelinePanel x:Name="Timeline" Grid.Row="4" Grid.Column="1" Margin="0,4,0,0" />
+
+        <!-- Status Bar -->
+        <Border Grid.Row="5" Grid.ColumnSpan="3" Background="{DynamicResource StatusBar}" Padding="5">
+            <StackPanel Orientation="Horizontal" Spacing="20">
+                <TextBlock x:Name="StatusFrameText" Text="Frame: 1 / 1" />
+                <TextBlock x:Name="StatusToolText" Text="Tool: Pencil" />
+                <TextBlock x:Name="StatusSavedText" Text="Ready" Foreground="{DynamicResource TextLight}"/>
+            </StackPanel>
+        </Border>
+        
     </Grid>
 </Window>

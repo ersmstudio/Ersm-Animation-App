@@ -1,0 +1,48 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="Ersm_Animation_App.Controls.ToolSettingsBar"
+             Background="{DynamicResource ToolbarBg}" Height="40"
+             Foreground="Black">
+    <StackPanel Orientation="Horizontal" Spacing="15" Margin="10,0" VerticalAlignment="Center">
+        <TextBlock x:Name="ToolNameText" Text="Pencil Settings:" FontWeight="Bold" VerticalAlignment="Center" />
+        
+        <!-- Standard Brush Panel -->
+        <StackPanel x:Name="BrushPanel" Orientation="Horizontal" Spacing="15" IsVisible="True">
+            <TextBlock Text="Thickness:" VerticalAlignment="Center" />
+            <Slider x:Name="ThicknessSlider" Minimum="1" Maximum="100" Value="2" Width="100" VerticalAlignment="Center" />
+            <TextBlock x:Name="ThicknessValue" Text="{Binding #ThicknessSlider.Value, StringFormat={}{0:0}}" VerticalAlignment="Center" Width="30"/>
+            
+            <TextBlock Text="Opacity:" VerticalAlignment="Center" Margin="10,0,0,0"/>
+            <Slider x:Name="OpacitySlider" Minimum="0" Maximum="100" Value="100" Width="100" VerticalAlignment="Center" />
+            <TextBlock x:Name="OpacityValue" Text="{Binding #OpacitySlider.Value, StringFormat={}{0:0}%}" VerticalAlignment="Center" Width="40"/>
+        </StackPanel>
+
+        <!-- Eraser Mode Panel -->
+        <StackPanel x:Name="EraserPanel" Orientation="Horizontal" Spacing="15" IsVisible="False">
+            <TextBlock Text="Mode:" VerticalAlignment="Center" />
+            <ComboBox x:Name="EraserModeCombo" SelectedIndex="0" VerticalAlignment="Center">
+                <ComboBoxItem Content="Full Stroke" />
+                <ComboBoxItem Content="Path Cut" />
+                <ComboBoxItem Content="Node Cut" />
+            </ComboBox>
+            <TextBlock Text="Size:" VerticalAlignment="Center" Margin="10,0,0,0" />
+            <Slider x:Name="EraserSizeSlider" Minimum="1" Maximum="100" Value="20" Width="100" VerticalAlignment="Center" />
+            <TextBlock Text="{Binding #EraserSizeSlider.Value, StringFormat={}{0:0}}" VerticalAlignment="Center" Width="30"/>
+        </StackPanel>
+        
+        <!-- Text Panel -->
+        <!-- Text Panel -->
+        <StackPanel x:Name="TextPanel" Orientation="Horizontal" Spacing="15" IsVisible="False">
+            <TextBlock Text="Font Size:" VerticalAlignment="Center" />
+            <NumericUpDown x:Name="FontSizeInput" Minimum="8" Maximum="144" Value="24" VerticalAlignment="Center" Width="120" />
+        </StackPanel>
+
+        <!-- Select Panel -->
+        <StackPanel x:Name="SelectPanel" Orientation="Horizontal" Spacing="10" IsVisible="False">
+            <Button x:Name="BtnSelectDelete" Content="Delete" Click="BtnSelectDelete_Click" Foreground="Red" />
+            <Button x:Name="BtnSelectFlipH" Content="Flip H" Click="BtnSelectFlipH_Click" />
+            <Button x:Name="BtnSelectFlipV" Content="Flip V" Click="BtnSelectFlipV_Click" />
+        </StackPanel>
+        
+    </StackPanel>
+</UserControl>

@@ -1,0 +1,64 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="using:Ersm_Animation_App.Controls"
+             x:Class="Ersm_Animation_App.Controls.RightPanel"
+             Background="{DynamicResource PanelBg}"
+             Width="250">
+    <TabControl Foreground="Black">
+        <TabItem Header="Settings">
+            <ScrollViewer>
+                <StackPanel Spacing="20" Margin="5">
+                    <!-- Palette Section -->
+                    <local:ColorPalettePanel x:Name="PaletteCtrl" />
+                    
+                    <Separator Background="{DynamicResource Border}" Height="1"/>
+                    
+                    <!-- Project Settings -->
+                    <TextBlock Text="Project Settings" FontWeight="Bold" />
+                    <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto" RowSpacing="10">
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Width:" VerticalAlignment="Center" />
+                        <NumericUpDown Grid.Row="0" Grid.Column="1" x:Name="ProjWidth" Minimum="100" />
+                        
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Height:" VerticalAlignment="Center" />
+                        <NumericUpDown Grid.Row="1" Grid.Column="1" x:Name="ProjHeight" Minimum="100" />
+                        
+                        <TextBlock Grid.Row="2" Grid.Column="0" Text="FPS:" VerticalAlignment="Center" />
+                        <NumericUpDown Grid.Row="2" Grid.Column="1" x:Name="ProjFPS" Minimum="1" Maximum="120" />
+                        
+                        <TextBlock Grid.Row="3" Grid.Column="0" Text="Looping:" VerticalAlignment="Center" />
+                        <CheckBox Grid.Row="3" Grid.Column="1" x:Name="ProjLoop" />
+                        
+                        <TextBlock Grid.Row="4" Grid.Column="0" Text="Loop Start:" VerticalAlignment="Center" />
+                        <NumericUpDown Grid.Row="4" Grid.Column="1" x:Name="ProjLoopStart" Minimum="0" />
+                        
+                        <TextBlock Grid.Row="5" Grid.Column="0" Text="Loop End:" VerticalAlignment="Center" />
+                        <NumericUpDown Grid.Row="5" Grid.Column="1" x:Name="ProjLoopEnd" Minimum="0" />
+                    </Grid>
+                    
+                    <Separator Background="{DynamicResource Border}" Height="1"/>
+                    
+                    <!-- Onion Skin Settings -->
+                    <TextBlock Text="Onion Skinning" FontWeight="Bold" />
+                    <StackPanel Spacing="5">
+                        <CheckBox x:Name="OnionSkinEnabled" Content="Enable Onion Skin" />
+                        <TextBlock Text="Previous Frames:" />
+                        <Slider x:Name="OnionSkinPrev" Minimum="0" Maximum="5" Value="1" />
+                        <TextBlock Text="Next Frames:" />
+                        <Slider x:Name="OnionSkinNext" Minimum="0" Maximum="5" Value="0" />
+                    </StackPanel>
+                    
+                </StackPanel>
+            </ScrollViewer>
+        </TabItem>
+        <TabItem Header="Library">
+            <StackPanel Margin="5" Spacing="10">
+                <TextBlock Text="Project Assets Library" FontWeight="Bold" />
+                <TextBlock Text="This section will hold raster images, imported audio files, and saved objects for this project architecture in a future update." 
+                           TextWrapping="Wrap" Foreground="{DynamicResource TextLight}"/>
+                <ListBox x:Name="LibraryAssetsList" Background="Transparent" BorderThickness="1" BorderBrush="{DynamicResource Border}" Height="300">
+                    <!-- Library assets will be loaded dynamically -->
+                </ListBox>
+            </StackPanel>
+        </TabItem>
+    </TabControl>
+</UserControl>

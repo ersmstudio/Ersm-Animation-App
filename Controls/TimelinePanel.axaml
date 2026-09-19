@@ -1,0 +1,38 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="Ersm_Animation_App.Controls.TimelinePanel"
+             Background="{DynamicResource TimelineBg}"
+             Foreground="Black"
+             Height="150">
+    <Grid RowDefinitions="Auto, *">
+        <!-- Controls Bar -->
+        <Border Grid.Row="0" Background="{DynamicResource ToolbarBg}" Padding="5">
+            <Grid ColumnDefinitions="Auto, *, Auto">
+                <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="5">
+                    <Button x:Name="BtnAddLayer" Content="+ Layer" ToolTip.Tip="Add New Layer" />
+                </StackPanel>
+                
+                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="5" HorizontalAlignment="Center">
+                    <Button x:Name="BtnPrevFrame" Content="◀" ToolTip.Tip="Previous Frame" />
+                    <Button x:Name="BtnPlay" Content="▶ Play" ToolTip.Tip="Play Animation" />
+                    <Button x:Name="BtnPause" Content="⏸" ToolTip.Tip="Pause" />
+                    <Button x:Name="BtnStop" Content="⏹" ToolTip.Tip="Stop" />
+                    <Button x:Name="BtnNextFrame" Content="▶" ToolTip.Tip="Next Frame" />
+                </StackPanel>
+                
+                <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="5">
+                    <Button x:Name="BtnAddFrame" Content="+ Frame" ToolTip.Tip="Add New Frame" />
+                    <Button x:Name="BtnDupFrame" Content="Copy Frame" ToolTip.Tip="Duplicate Current Frame" />
+                    <Button x:Name="BtnRemoveFrame" Content="- Frame" ToolTip.Tip="Remove Current Frame" />
+                </StackPanel>
+            </Grid>
+        </Border>
+        
+        <!-- Timeline Grid -->
+        <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+            <StackPanel x:Name="LayersContainer" Orientation="Vertical" Margin="5" Spacing="5">
+                <!-- Layers will be generated dynamically here -->
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

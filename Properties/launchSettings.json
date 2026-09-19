@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Ersm Animation App": {
+      "commandName": "Project",
+      "hotReloadEnabled": false
+    }
+  }
+}
