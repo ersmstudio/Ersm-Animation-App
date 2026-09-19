@@ -9,7 +9,8 @@ namespace Ersm_Animation_App.Models
         public string Name { get; set; } = "Layer";
         public bool Visible { get; set; } = true;
         public bool IsLocked { get; set; } = false;
-        public bool Locked { get; set; } = false;
+        /// <summary>Alias for IsLocked for backward compatibility</summary>
+        public bool Locked { get => IsLocked; set => IsLocked = value; }
         public double Opacity { get; set; } = 1.0;
         public LayerType Type { get; set; } = LayerType.Vector;
 

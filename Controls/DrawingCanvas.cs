@@ -32,18 +32,17 @@ namespace Ersm_Animation_App
         public int CurrentEraserMode { get; set; } = 0;
         public double CurrentEraserSize { get; set; } = 20.0;
         
-        // Palette color tracking (Toon Boom style)
         public string? ActivePaletteColorId { get; set; }
 
         public bool OnionSkinEnabled { get; set; } = false;
         public int OnionSkinPrevCount { get; set; } = 1;
         public int OnionSkinNextCount { get; set; } = 0;
 
-        // Undo/Redo
+        // Undo/Redo with capacity limit to prevent memory leak
+        private const int MaxUndoSteps = 50;
         private Stack<List<Stroke>> _undoStack = new();
         private Stack<List<Stroke>> _redoStack = new();
 
-        // Tool System
         private Dictionary<MainWindow.ToolType, ITool> _tools = new();
         private ITool? _activeTool;
 
@@ -54,7 +53,6 @@ namespace Ersm_Animation_App
             PointerMoved += OnPointerMoved;
             PointerReleased += OnPointerReleased;
 
-            // Register basic tools initially
             _tools[MainWindow.ToolType.Pencil] = new PencilTool();
             _tools[MainWindow.ToolType.Brush] = new BrushTool();
             _tools[MainWindow.ToolType.Eraser] = new EraserTool();
@@ -85,6 +83,15 @@ namespace Ersm_Animation_App
             var clonedStrokes = currentFrame.Strokes.Select(s => s.Clone()).ToList();
             _undoStack.Push(clonedStrokes);
             _redoStack.Clear();
+
+            // Enforce capacity limit
+            if (_undoStack.Count > MaxUndoSteps)
+            {
+                var temp = _undoStack.ToArray();
+                _undoStack.Clear();
+                for (int i = 0; i < MaxUndoSteps; i++)
+                    _undoStack.Push(temp[MaxUndoSteps - 1 - i]);
+            }
         }
 
         public void Undo()
@@ -129,7 +136,14 @@ namespace Ersm_Animation_App
         public AnimationFrame? GetCurrentFrame()
         {
             if (Project == null || Project.Layers.Count == 0) return null;
-            var activeLayer = Project.Layers.FirstOrDefault(l => l.Visible && !l.Locked);
+            
+            // Use ActiveLayerId if set, otherwise fallback to first visible unlocked layer
+            var activeLayer = Project.Layers.FirstOrDefault(l => l.Id == Project.ActiveLayerId);
+            if (activeLayer == null || !activeLayer.Visible || activeLayer.IsLocked)
+            {
+                activeLayer = Project.Layers.FirstOrDefault(l => l.Visible && !l.IsLocked);
+            }
+            
             if (activeLayer == null) return null;
 
             var frame = activeLayer.Frames.FirstOrDefault(f => f.Index == Project.CurrentFrameIndex);
@@ -174,10 +188,9 @@ namespace Ersm_Animation_App
 
             if (Project == null) return;
 
-            // Draw Background
-            context.FillRectangle(
-                (IBrush)App.Current.FindResource("CanvasBg") ?? Brushes.White,
-                new Rect(Bounds.Size));
+            // Draw Background â€” use this control's context to find resources
+            var bgBrush = (IBrush?)(this.FindResource("CanvasBg") ?? Brushes.White);
+            context.FillRectangle(bgBrush ?? Brushes.White, new Rect(Bounds.Size));
 
             // Onion Skinning
             if (OnionSkinEnabled)
@@ -192,25 +205,20 @@ namespace Ersm_Animation_App
                 }
             }
 
-            // Draw current frame strokes across all visible layers
             DrawFrameStrokes(context, Project.CurrentFrameIndex, 1.0, null);
 
-            // Give the active tool a chance to draw overlays (e.g. lasso selection outline, shapes being drawn)
             _activeTool?.Render(context, this);
         }
 
         public void DeleteSelectedStrokes()
         {
             if (Project == null) return;
+            SaveUndoState();
             var frame = Project.Layers.SelectMany(l => l.Frames).FirstOrDefault(f => f.Index == Project.CurrentFrameIndex);
             if (frame != null)
             {
-                int removed = frame.Strokes.RemoveAll(s => s.Selected);
-                if (removed > 0)
-                {
-                    SaveUndoState();
-                    InvalidateVisual();
-                }
+                frame.Strokes.RemoveAll(s => s.Selected);
+                InvalidateVisual();
             }
         }
 
@@ -242,7 +250,6 @@ namespace Ersm_Animation_App
                         if (stroke.Type == StrokeType.Freehand)
                         {
                             if (stroke.Points.Count < 2) continue;
-                            // Use StreamGeometry for smooth rendering with round caps
                             var geometry = new StreamGeometry();
                             using (var ctx = geometry.Open())
                             {

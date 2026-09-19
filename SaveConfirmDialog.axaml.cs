@@ -6,9 +6,9 @@ namespace Ersm_Animation_App
 {
     public enum SaveConfirmResult
     {
+        Cancel,
         Save,
-        DontSave,
-        Cancel
+        DontSave
     }
 
     public partial class SaveConfirmDialog : Window
@@ -38,7 +38,7 @@ namespace Ersm_Animation_App
             Close(Result);
         }
 
-        public static async Task<SaveConfirmResult> ShowDialog(Window owner)
+        public static async Task<SaveConfirmResult> ShowSaveConfirmAsync(Window owner)
         {
             var dialog = new SaveConfirmDialog();
             return await dialog.ShowDialog<SaveConfirmResult>(owner);

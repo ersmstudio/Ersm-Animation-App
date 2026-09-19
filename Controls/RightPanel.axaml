@@ -4,7 +4,7 @@
              x:Class="Ersm_Animation_App.Controls.RightPanel"
              Background="{DynamicResource PanelBg}"
              Width="250">
-    <TabControl Foreground="Black">
+    <TabControl Foreground="{DynamicResource Text}">
         <TabItem Header="Settings">
             <ScrollViewer>
                 <StackPanel Spacing="20" Margin="5">

@@ -14,37 +14,30 @@ namespace Ersm_Animation_App.Models
         public StrokeType Type { get; set; } = StrokeType.Freehand;
         public List<Point> Points { get; set; } = new();
         
-        // Stroke
         public Color Color { get; set; } = Colors.Black;
         public double Thickness { get; set; } = 2.0;
         public double Opacity { get; set; } = 1.0;
         
-        // Fill & Shape
         public Color FillColor { get; set; } = Colors.Transparent;
         public Rect Bounds { get; set; }
         
-        // Text
         public string Text { get; set; } = string.Empty;
         
         public bool Visible { get; set; } = true;
         public bool Selected { get; set; } = false;
 
-        // Palette Color reference
         public string? PaletteColorId { get; set; }
 
-        // --- Transformation Properties ---
         public double TranslateX { get; set; } = 0;
         public double TranslateY { get; set; } = 0;
         public double ScaleX { get; set; } = 1.0;
         public double ScaleY { get; set; } = 1.0;
-        public double Rotation { get; set; } = 0; // In degrees
+        public double Rotation { get; set; } = 0;
         public double SkewX { get; set; } = 0;
         public double SkewY { get; set; } = 0;
         public bool FlipX { get; set; } = false;
         public bool FlipY { get; set; } = false;
         
-        // The Pivot point (Anchor) in local un-transformed coordinates
-        // Automatically initialized to center of bounds on first selection if not set
         public Point? Pivot { get; set; } 
 
         public Stroke Clone()
@@ -52,7 +45,7 @@ namespace Ersm_Animation_App.Models
             return new Stroke
             {
                 Type = this.Type,
-                Points = this.Points.ToList(),
+                Points = this.Points?.ToList() ?? new List<Point>(),
                 Color = this.Color,
                 Thickness = this.Thickness,
                 Opacity = this.Opacity,
@@ -75,44 +68,32 @@ namespace Ersm_Animation_App.Models
             };
         }
 
-        // --- Math & Geometry Helpers ---
-
-        /// <summary>
-        /// Gets the transformation matrix mapping local coordinates to screen coordinates.
-        /// </summary>
         public Matrix GetRenderMatrix()
         {
             var p = GetPivot();
-            var m = Matrix.CreateTranslation(-p.X, -p.Y); // Move to origin
+            var m = Matrix.CreateTranslation(-p.X, -p.Y);
             
-            // Apply scale & flip
             double sx = ScaleX * (FlipX ? -1 : 1);
             double sy = ScaleY * (FlipY ? -1 : 1);
             m *= Matrix.CreateScale(sx, sy);
             
-            // Apply skew
             if (SkewX != 0 || SkewY != 0)
                 m *= Matrix.CreateSkew(MathUtilities.Deg2Rad(SkewX), MathUtilities.Deg2Rad(SkewY));
             
-            // Apply rotation
             if (Rotation != 0)
                 m *= Matrix.CreateRotation(MathUtilities.Deg2Rad(Rotation));
             
-            // Move back and translate
             m *= Matrix.CreateTranslation(p.X + TranslateX, p.Y + TranslateY);
             
             return m;
         }
 
-        /// <summary>
-        /// Returns the exact un-transformed bounding box of the geometry.
-        /// </summary>
         public Rect GetLocalBounds()
         {
             if (Type == StrokeType.Rectangle || Type == StrokeType.Ellipse || Type == StrokeType.Text)
                 return Bounds;
             
-            if (Points.Count == 0) return new Rect(0,0,0,0);
+            if (Points == null || Points.Count == 0) return new Rect(0,0,0,0);
             
             double minX = Points.Min(p => p.X);
             double maxX = Points.Max(p => p.X);
@@ -121,9 +102,6 @@ namespace Ersm_Animation_App.Models
             return new Rect(minX, minY, maxX - minX, maxY - minY);
         }
 
-        /// <summary>
-        /// Returns the screen-space bounding box after all transformations are applied.
-        /// </summary>
         public Rect GetTransformedBounds()
         {
             var local = GetLocalBounds();
@@ -148,32 +126,26 @@ namespace Ersm_Animation_App.Models
             return new Point(b.Center.X, b.Center.Y);
         }
 
-        /// <summary>
-        /// Checks if a screen point intersects with this stroke, taking transforms into account.
-        /// </summary>
         public bool HitTestPoint(Point screenPoint, double hitTolerance = 5.0)
         {
             var matrix = GetRenderMatrix();
-            if (!matrix.HasInverse) return false; // Edge case (Scale = 0)
+            if (!matrix.HasInverse) return false;
             
             var localPoint = screenPoint.Transform(matrix.Invert());
             
             if (Type == StrokeType.Rectangle || Type == StrokeType.Ellipse || Type == StrokeType.Text)
             {
-                // Quick AABB check in local space
                 if (FillColor != Colors.Transparent)
                     return Bounds.Contains(localPoint);
                 else
                 {
-                    // If no fill, only hit the border
                     var inflated = Bounds.Inflate(hitTolerance + Thickness / 2);
                     var deflated = Bounds.Deflate(hitTolerance + Thickness / 2);
                     return inflated.Contains(localPoint) && !deflated.Contains(localPoint);
                 }
             }
             
-            // For Freehand and Line, check distance to line segments
-            if (Points.Count < 2) return false;
+            if (Points == null || Points.Count < 2) return false;
             
             double threshSq = (hitTolerance + Thickness / 2) * (hitTolerance + Thickness / 2);
             for (int i = 0; i < Points.Count - 1; i++)

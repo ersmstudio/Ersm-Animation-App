@@ -19,7 +19,7 @@
         <SolidColorBrush x:Key="Accent">#C8A96E</SolidColorBrush>
         <SolidColorBrush x:Key="AccentHover">#D4B87A</SolidColorBrush>
         <SolidColorBrush x:Key="Text">#4A4540</SolidColorBrush>
-        <SolidColorBrush x:Key="TextLight">#4A4540</SolidColorBrush>
+        <SolidColorBrush x:Key="TextLight">#8A8580</SolidColorBrush>
         <SolidColorBrush x:Key="Border">#D5CFC0</SolidColorBrush>
         <SolidColorBrush x:Key="Selected">#DDD5C0</SolidColorBrush>
         <SolidColorBrush x:Key="StatusBar">#E0D8C8</SolidColorBrush>

@@ -2,7 +2,6 @@ using System;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
-using Avalonia.Layout;
 using Avalonia.Media;
 using Ersm_Animation_App.Models;
 
@@ -14,30 +13,36 @@ namespace Ersm_Animation_App.Tools
         {
             if (!e.GetCurrentPoint(canvas).Properties.IsLeftButtonPressed) return;
 
-            var insertPos = e.GetPosition(canvas);
-            
-            // Get the parent window to show the dialog
-            var topLevel = TopLevel.GetTopLevel(canvas) as Window;
-            if (topLevel == null) return;
-            
-            var dialog = new TextInputDialog();
-            var result = await dialog.ShowDialog<string?>(topLevel);
-            
-            if (!string.IsNullOrWhiteSpace(result))
+            try
             {
-                canvas.SaveUndoState();
-                var textStroke = new Stroke
+                var insertPos = e.GetPosition(canvas);
+                
+                var topLevel = TopLevel.GetTopLevel(canvas) as Window;
+                if (topLevel == null) return;
+                
+                var dialog = new TextInputDialog();
+                var result = await dialog.ShowDialog<string?>(topLevel);
+                
+                if (!string.IsNullOrWhiteSpace(result))
                 {
-                    Type = StrokeType.Text,
-                    Text = result,
-                    Color = canvas.CurrentColor,
-                    Thickness = canvas.CurrentThickness * 4 > 12 ? canvas.CurrentThickness * 4 : 16,
-                    Bounds = new Rect(insertPos, new Size(300, 50)),
-                    Opacity = canvas.CurrentOpacity,
-                    PaletteColorId = canvas.ActivePaletteColorId
-                };
-                currentFrame.Strokes.Add(textStroke);
-                canvas.InvalidateVisual();
+                    canvas.SaveUndoState();
+                    var textStroke = new Stroke
+                    {
+                        Type = StrokeType.Text,
+                        Text = result,
+                        Color = canvas.CurrentColor,
+                        Thickness = canvas.CurrentThickness * 4 > 12 ? canvas.CurrentThickness * 4 : 16,
+                        Bounds = new Rect(insertPos, new Size(300, 50)),
+                        Opacity = canvas.CurrentOpacity,
+                        PaletteColorId = canvas.ActivePaletteColorId
+                    };
+                    currentFrame.Strokes.Add(textStroke);
+                    canvas.InvalidateVisual();
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"TextTool error: {ex.Message}");
             }
         }
 

@@ -10,7 +10,7 @@
     <Grid RowDefinitions="Auto, Auto, *, Auto, 150, Auto" ColumnDefinitions="60, *, Auto">
         
         <!-- Menu Bar -->
-        <Menu Grid.Row="0" Grid.ColumnSpan="3" Background="{DynamicResource ToolbarBg}" Foreground="Black">
+        <Menu Grid.Row="0" Grid.ColumnSpan="3" Background="{DynamicResource ToolbarBg}" Foreground="{DynamicResource Text}">
             <MenuItem Header="_File">
                 <MenuItem Header="New Project" Click="MenuNewProject_Click"/>
                 <MenuItem Header="Open..." Click="MenuOpen_Click"/>

@@ -2,7 +2,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              x:Class="Ersm_Animation_App.Controls.ToolSettingsBar"
              Background="{DynamicResource ToolbarBg}" Height="40"
-             Foreground="Black">
+             Foreground="{DynamicResource Text}">
     <StackPanel Orientation="Horizontal" Spacing="15" Margin="10,0" VerticalAlignment="Center">
         <TextBlock x:Name="ToolNameText" Text="Pencil Settings:" FontWeight="Bold" VerticalAlignment="Center" />
         
@@ -30,7 +30,6 @@
             <TextBlock Text="{Binding #EraserSizeSlider.Value, StringFormat={}{0:0}}" VerticalAlignment="Center" Width="30"/>
         </StackPanel>
         
-        <!-- Text Panel -->
         <!-- Text Panel -->
         <StackPanel x:Name="TextPanel" Orientation="Horizontal" Spacing="15" IsVisible="False">
             <TextBlock Text="Font Size:" VerticalAlignment="Center" />

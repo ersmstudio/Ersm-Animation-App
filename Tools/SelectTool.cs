@@ -16,7 +16,7 @@ namespace Ersm_Animation_App.Tools
         private TransformMode _currentMode = TransformMode.None;
         private Point _lastMousePos;
         private Stroke? _selectedStroke;
-        private int _scaleHandleIndex = -1; // 0-7 clockwise from top-left
+        private int _scaleHandleIndex = -1;
 
         private const double HandleSize = 10;
         private const double HitTolerance = 5.0;
@@ -26,12 +26,11 @@ namespace Ersm_Animation_App.Tools
             var point = e.GetPosition(canvas);
             var props = e.GetCurrentPoint(canvas).Properties;
 
-            // Handle Context Menu (Right Click)
             if (props.IsRightButtonPressed)
             {
                 if (_selectedStroke != null && _selectedStroke.HitTestPoint(point, HitTolerance))
                 {
-                    // Flip image on right click as requested
+                    canvas.SaveUndoState();
                     _selectedStroke.FlipX = !_selectedStroke.FlipX;
                     canvas.InvalidateVisual();
                 }
@@ -40,7 +39,6 @@ namespace Ersm_Animation_App.Tools
 
             if (!props.IsLeftButtonPressed) return;
 
-            // 1. Check if we clicked a transform handle of the currently selected stroke
             if (_selectedStroke != null)
             {
                 var handles = GetHandles(_selectedStroke);
@@ -49,7 +47,6 @@ namespace Ersm_Animation_App.Tools
                     if (new Rect(handles[i].X - HandleSize, handles[i].Y - HandleSize, HandleSize * 2, HandleSize * 2).Contains(point))
                     {
                         canvas.SaveUndoState();
-                        // If it's an edge handle (1, 3, 5, 7) and Ctrl is pressed -> Skew
                         if ((i % 2 != 0) && (e.KeyModifiers & KeyModifiers.Control) != 0)
                             _currentMode = TransformMode.Skew;
                         else
@@ -61,7 +58,6 @@ namespace Ersm_Animation_App.Tools
                     }
                 }
 
-                // Check Rotation Handle (above top center)
                 var rotHandle = GetRotationHandle(_selectedStroke);
                 if (new Rect(rotHandle.X - HandleSize, rotHandle.Y - HandleSize, HandleSize * 2, HandleSize * 2).Contains(point))
                 {
@@ -71,7 +67,6 @@ namespace Ersm_Animation_App.Tools
                     return;
                 }
 
-                // Check Pivot Move
                 var pivotScreen = _selectedStroke.GetPivot().Transform(_selectedStroke.GetRenderMatrix());
                 if (new Rect(pivotScreen.X - HandleSize, pivotScreen.Y - HandleSize, HandleSize * 2, HandleSize * 2).Contains(point))
                 {
@@ -82,7 +77,6 @@ namespace Ersm_Animation_App.Tools
                 }
             }
 
-            // 2. Hit test strokes in reverse order (top to bottom)
             Stroke? hit = null;
             for (int i = currentFrame.Strokes.Count - 1; i >= 0; i--)
             {
@@ -94,7 +88,6 @@ namespace Ersm_Animation_App.Tools
                 }
             }
 
-            // Deselect all
             foreach (var s in currentFrame.Strokes) s.Selected = false;
 
             if (hit != null)
@@ -150,14 +143,13 @@ namespace Ersm_Animation_App.Tools
             }
             else if (_currentMode == TransformMode.Skew)
             {
-                if (_scaleHandleIndex == 1 || _scaleHandleIndex == 5) // Top/Bottom -> SkewX
+                if (_scaleHandleIndex == 1 || _scaleHandleIndex == 5)
                     _selectedStroke.SkewX += dx * 0.5;
-                else if (_scaleHandleIndex == 3 || _scaleHandleIndex == 7) // Left/Right -> SkewY
+                else if (_scaleHandleIndex == 3 || _scaleHandleIndex == 7)
                     _selectedStroke.SkewY += dy * 0.5;
             }
             else if (_currentMode == TransformMode.Scale)
             {
-                // To keep it robust without matrix decomposition, we calculate scale delta
                 var matrix = _selectedStroke.GetRenderMatrix();
                 if (matrix.HasInverse)
                 {
@@ -167,37 +159,40 @@ namespace Ersm_Animation_App.Tools
                     double ldx = p2.X - p1.X;
                     double ldy = p2.Y - p1.Y;
                     var b = _selectedStroke.GetLocalBounds();
+
+                    // Guard against division by zero
+                    if (b.Width < 0.001 || b.Height < 0.001)
+                    {
+                        _lastMousePos = point;
+                        canvas.InvalidateVisual();
+                        return;
+                    }
                     
                     double scaleXDelta = ldx / b.Width;
                     double scaleYDelta = ldy / b.Height;
                     
-                    // Adjust sign based on handle position
                     if (_scaleHandleIndex == 0 || _scaleHandleIndex == 6 || _scaleHandleIndex == 7) scaleXDelta = -scaleXDelta;
                     if (_scaleHandleIndex == 0 || _scaleHandleIndex == 1 || _scaleHandleIndex == 2) scaleYDelta = -scaleYDelta;
                     
-                    if (_scaleHandleIndex == 1 || _scaleHandleIndex == 5) scaleXDelta = 0; // Top/Bottom center
-                    if (_scaleHandleIndex == 3 || _scaleHandleIndex == 7) scaleYDelta = 0; // Left/Right center
+                    if (_scaleHandleIndex == 1 || _scaleHandleIndex == 5) scaleXDelta = 0;
+                    if (_scaleHandleIndex == 3 || _scaleHandleIndex == 7) scaleYDelta = 0;
 
-                    // Uniform scaling (Shift)
                     if (isShift)
                     {
-                        if (Math.Abs(scaleXDelta) > Math.Abs(scaleYDelta)) scaleYDelta = scaleXDelta;
-                        else scaleXDelta = scaleYDelta;
+                        if (Math.Abs(scaleXDelta) > Math.Abs(scaleYDelta))
+                            scaleYDelta = Math.Sign(scaleYDelta) * Math.Abs(scaleXDelta);
+                        else
+                            scaleXDelta = Math.Sign(scaleXDelta) * Math.Abs(scaleYDelta);
                     }
 
-                    // Alt modifier: Scale from center vs opposite corner
                     double factorX = isAlt ? 2.0 : 1.0;
                     double factorY = isAlt ? 2.0 : 1.0;
 
                     _selectedStroke.ScaleX += scaleXDelta * factorX;
                     _selectedStroke.ScaleY += scaleYDelta * factorY;
                     
-                    // Note: True anchor-based scaling would require adjusting TranslateX/Y.
-                    // For now, this modifies scale directly which centers around the pivot.
-                    // If Alt is NOT pressed, we compensate translation to simulate opposite corner anchor.
                     if (!isAlt)
                     {
-                        // Simplified compensation:
                         _selectedStroke.TranslateX += dx * 0.5;
                         _selectedStroke.TranslateY += dy * 0.5;
                     }
@@ -222,22 +217,18 @@ namespace Ersm_Animation_App.Tools
             var handlePen = new Pen(new SolidColorBrush(Colors.DodgerBlue), 1);
             var boxPen = new Pen(new SolidColorBrush(Colors.DodgerBlue), 1);
 
-            // Draw bounding box
             context.DrawRectangle(null, boxPen, bounds);
 
-            // Draw 8 resize handles
             var handles = GetHandlesBounds(bounds);
             foreach (var h in handles)
             {
                 context.DrawRectangle(handleBrush, handlePen, new Rect(h.X - HandleSize / 2, h.Y - HandleSize / 2, HandleSize, HandleSize));
             }
 
-            // Draw Rotation Handle
             var rot = new Point(bounds.Center.X, bounds.Top - 30);
             context.DrawLine(boxPen, new Point(bounds.Center.X, bounds.Top), rot);
             context.DrawEllipse(handleBrush, handlePen, rot, HandleSize / 2, HandleSize / 2);
 
-            // Draw Pivot
             var pivotScreen = _selectedStroke.GetPivot().Transform(_selectedStroke.GetRenderMatrix());
             context.DrawEllipse(new SolidColorBrush(Colors.Red), null, pivotScreen, 4, 4);
         }

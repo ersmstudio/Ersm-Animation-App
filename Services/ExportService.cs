@@ -16,16 +16,15 @@ namespace Ersm_Animation_App.Services
     {
         public static async Task ExportAnimationAsync(DrawingCanvas canvas, AnimationProject project, string outputPath, bool isGif)
         {
-            // 1. Ensure FFmpeg is present
             string baseDir = AppDomain.CurrentDomain.BaseDirectory;
             if (!File.Exists(Path.Combine(baseDir, "ffmpeg.exe")))
             {
-                // Note: The UI should ideally show a loading state during this download.
                 await Xabe.FFmpeg.Downloader.FFmpegDownloader.GetLatestVersion(Xabe.FFmpeg.Downloader.FFmpegVersion.Official, baseDir);
             }
             
             GlobalFFOptions.Configure(new FFOptions { BinaryFolder = baseDir });
 
+            if (!project.Layers.Any()) return;
             int maxFrames = project.Layers.Max(l => l.Frames.Count);
             if (maxFrames == 0) return;
 
@@ -38,7 +37,6 @@ namespace Ersm_Animation_App.Services
 
                 for (int i = 0; i < maxFrames; i++)
                 {
-                    // 1. Update UI state on UI Thread
                     await Dispatcher.UIThread.InvokeAsync(() =>
                     {
                         project.CurrentFrameIndex = i;
@@ -46,16 +44,14 @@ namespace Ersm_Animation_App.Services
                         canvas.UpdateLayout();
                     });
 
-                    // Wait a tiny bit for render to settle
                     await Task.Delay(50);
 
-                    // 2. Render to bitmap
                     await Dispatcher.UIThread.InvokeAsync(() =>
                     {
                         var pixelSize = new PixelSize((int)canvas.Bounds.Width, (int)canvas.Bounds.Height);
                         if (pixelSize.Width == 0 || pixelSize.Height == 0) return;
 
-                        var rtb = new RenderTargetBitmap(pixelSize, new Vector(96, 96));
+                        using var rtb = new RenderTargetBitmap(pixelSize, new Vector(96, 96));
                         rtb.Render(canvas);
                         
                         string framePath = Path.Combine(tempFolder, $"frame_{i:D4}.png");
@@ -63,28 +59,24 @@ namespace Ersm_Animation_App.Services
                     });
                 }
 
-                // Restore original frame
                 await Dispatcher.UIThread.InvokeAsync(() =>
                 {
                     project.CurrentFrameIndex = originalFrame;
                     canvas.InvalidateVisual();
                 });
 
-                // 3. Convert to Video / GIF using FFMpegCore
                 if (isGif)
                 {
-                    // FFmpeg command to create a palette then output gif
                     await FFMpegArguments
                         .FromFileInput(Path.Combine(tempFolder, "frame_%04d.png"), false, options => options
                             .WithFramerate(project.FPS))
                         .OutputToFile(outputPath, false, options => options
-                            .WithCustomArgument("-vf palettegen,paletteuse")
+                            .WithCustomArgument("-vf \"split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse\"")
                             .WithFramerate(project.FPS))
                         .ProcessAsynchronously();
                 }
                 else
                 {
-                    // MP4
                     await FFMpegArguments
                         .FromFileInput(Path.Combine(tempFolder, "frame_%04d.png"), false, options => options
                             .WithFramerate(project.FPS))

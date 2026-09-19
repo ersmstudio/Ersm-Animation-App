@@ -4,11 +4,6 @@ using Avalonia.Input;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using System;
-using System.CodeDom.Compiler;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Ersm_Animation_App.Controls
 {
@@ -66,28 +61,22 @@ namespace Ersm_Animation_App.Controls
         public double Hue
         {
             get => _hue;
-
             set
             {
                 _hue = value;
-
                 GenerateColorSquare();
-
                 InvalidateVisual();
             }
         }
 
         private WriteableBitmap _bitmap =
-        new WriteableBitmap(
-       new PixelSize(256, 256),
-       new Vector(96, 96),
-       Avalonia.Platform.PixelFormat.Bgra8888,
-       Avalonia.Platform.AlphaFormat.Premul);
+            new WriteableBitmap(
+                new PixelSize(256, 256),
+                new Vector(96, 96),
+                Avalonia.Platform.PixelFormat.Bgra8888,
+                Avalonia.Platform.AlphaFormat.Premul);
 
-        private Color HsvToColor(
-double hue,
-double saturation,
-double value)
+        private Color HsvToColor(double hue, double saturation, double value)
         {
             double c = value * saturation;
             double x = c * (1 - Math.Abs((hue / 60.0) % 2 - 1));
@@ -95,42 +84,12 @@ double value)
 
             double r, g, b;
 
-            if (hue < 60)
-            {
-                r = c;
-                g = x;
-                b = 0;
-            }
-            else if (hue < 120)
-            {
-                r = x;
-                g = c;
-                b = 0;
-            }
-            else if (hue < 180)
-            {
-                r = 0;
-                g = c;
-                b = x;
-            }
-            else if (hue < 240)
-            {
-                r = 0;
-                g = x;
-                b = c;
-            }
-            else if (hue < 300)
-            {
-                r = x;
-                g = 0;
-                b = c;
-            }
-            else
-            {
-                r = c;
-                g = 0;
-                b = x;
-            }
+            if (hue < 60) { r = c; g = x; b = 0; }
+            else if (hue < 120) { r = x; g = c; b = 0; }
+            else if (hue < 180) { r = 0; g = c; b = x; }
+            else if (hue < 240) { r = 0; g = x; b = c; }
+            else if (hue < 300) { r = x; g = 0; b = c; }
+            else { r = c; g = 0; b = x; }
 
             return Color.FromRgb((byte)((r + m) * 255), (byte)((g + m) * 255), (byte)((b + m) * 255));
         }
@@ -145,66 +104,40 @@ double value)
                 byte* buffer = (byte*)fb.Address;
                 for (int y = 0; y < height; y++)
                 {
-
-
-
-
                     for (int x = 0; x < width; x++)
                     {
-
                         double saturation = (double)x / (width - 1);
+                        double value = 1.0 - ((double)y / (height - 1));
+                        Color color = HsvToColor(Hue, saturation, value);
 
-                        double value = 1.0 -
-                                       ((double)y / (height - 1));
-                        Color color =
-                            HsvToColor(
-                                Hue,
-                                saturation,
-                                value);
-
-
-                        int pixelIndex =
-                               (y * fb.RowBytes) +
-                               (x * 4);
-
+                        int pixelIndex = (y * fb.RowBytes) + (x * 4);
                         buffer[pixelIndex + 0] = color.B;
                         buffer[pixelIndex + 1] = color.G;
                         buffer[pixelIndex + 2] = color.R;
                         buffer[pixelIndex + 3] = color.A;
                     }
                 }
-
             }
         }
+
         private void OnPointer(object? sender, PointerEventArgs e)
         {
             if (!e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
                 return;
 
+            // Guard against zero-size bounds to prevent NaN/crash
+            if (Bounds.Width <= 0 || Bounds.Height <= 0) return;
+
             var pos = e.GetPosition(this);
 
-            SelectedSaturation =
-                Math.Clamp(
-                    pos.X / Bounds.Width,
-                    0,
-                    1);
+            SelectedSaturation = Math.Clamp(pos.X / Bounds.Width, 0, 1);
+            SelectedValue = Math.Clamp(1 - (pos.Y / Bounds.Height), 0, 1);
 
-            SelectedValue =
-                Math.Clamp(
-                    1 - (pos.Y / Bounds.Height),
-                    0,
-                    1);
-
-            var color =
-                HsvToColor(
-                    Hue,
-                    SelectedSaturation,
-                    SelectedValue);
-
+            var color = HsvToColor(Hue, SelectedSaturation, SelectedValue);
             ColorChanged?.Invoke(color);
-
             InvalidateVisual();
         }
+
         public ColorSquare()
         {
             GenerateColorSquare();
@@ -216,6 +149,7 @@ double value)
         {
             return HsvToColor(Hue, SelectedSaturation, SelectedValue);
         }
+
         public override void Render(DrawingContext context)
         {
             base.Render(context);
@@ -225,21 +159,17 @@ double value)
                 new Rect(0, 0, _bitmap.PixelSize.Width, _bitmap.PixelSize.Height),
                 new Rect(0, 0, Bounds.Width, Bounds.Height));
 
-
             var selectorPos = new Point(
                 SelectedSaturation * Bounds.Width,
                 (1 - SelectedValue) * Bounds.Height
             );
 
             context.DrawEllipse(
-                 null,
-                  new Pen(Brushes.White, 2),
-                  selectorPos,
-                  6,
-                  6);
+                null,
+                new Pen(Brushes.White, 2),
+                selectorPos,
+                6,
+                6);
         }
-   
-
     }
-    
 }

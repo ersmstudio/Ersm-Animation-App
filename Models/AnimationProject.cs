@@ -24,5 +24,6 @@ namespace Ersm_Animation_App.Models
         public ColorPalette Palette { get; set; } = ColorPalette.CreateDefault();
 
         public int CurrentFrameIndex { get; set; } = 0;
+        public Guid ActiveLayerId { get; set; }
     }
 }

@@ -1,3 +1,4 @@
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
@@ -18,6 +19,9 @@ namespace Ersm_Animation_App
         public WelcomeWindow()
         {
             InitializeComponent();
+#if DEBUG
+            this.AttachDevTools();
+#endif
             
             // Load recent projects from settings (for now empty until settings service is built)
             RecentProjectsList.ItemsSource = new List<RecentProjectModel>();
